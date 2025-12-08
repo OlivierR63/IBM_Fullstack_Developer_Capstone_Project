@@ -28,12 +28,18 @@ SECRET_KEY =\
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-protocol = 'https://'
-subdomain = 'olivierrocha-8000.'
-domain = 'theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai'
-url_address = protocol + subdomain + domain
-ALLOWED_HOSTS = ['localhost', url_address]
-CSRF_TRUSTED_ORIGINS = [url_address]
+# --- START OF MODIFICATIONS FOR LOCAL DOCKER ---
+
+# In a development Docker Compose environment, we accept all 
+# connections from other services (named or IP) and the local host.
+# The '*' character is practical in DEV to avoid specifying all IPs.
+ALLOWED_HOSTS = ['*']
+
+# If DEBUG=True, Django allows Cross-Origin requests on hosts.
+# For local development, we trust standard and secure origins.
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000'] 
+
+# --- END OF MODIFICATIONS FOR LOCAL DOCKER ---
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
@@ -49,10 +55,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -148,4 +156,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'frontend/static'),
     os.path.join(BASE_DIR, 'frontend/build'),
     os.path.join(BASE_DIR, 'frontend/build/static'),
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
 ]

@@ -3,20 +3,24 @@ import requests
 import inspect
 import json
 import os
-from dotenv import load_dotenv
+import logging
 
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 backend_url = os.getenv(
-    'backend_url', default="http://localhost:3030")
+    'BACKEND_URL', default="http://localhost:3030")
+logger.info(f"DEBUG: backend_url = {backend_url}")
 
 sentiment_analyzer_url = os.getenv(
-    'sentiment_analyzer_url',
+    'SENTIMENT_URL',
     default="http://localhost:5050/")
+logger.info(f"DEBUG: sentiment_analyzer_url = {sentiment_analyzer_url}")
 
 searchcars_url = os.getenv(
-    'searchcars_url',
+    'SEARCHCARS_URL',
     default="http://localhost:3050/")
+logger.info(f"DEBUG: searchcars_url = {searchcars_url}")
+
 
 
 def get_request(endpoint, **kwargs):
@@ -26,8 +30,8 @@ def get_request(endpoint, **kwargs):
             params = params + key + "=" + value + "&"
 
     request_url = backend_url + endpoint + "?" + params
+    logger.info(f"DEBUG: GET from {request_url}")
 
-    print(f"GET from {request_url}")
     try:
         # Call get method of requests library with URL and parameters
         response = requests.get(request_url)
@@ -36,15 +40,15 @@ def get_request(endpoint, **kwargs):
         if response.text:
             return response.json()
         else:
-            print("Empty response received")
+            logger.error("ERROR: Empty response received")
             return None
     except json.JSONDecodeError:
-        print("Response is not a valid JSON")
+        logger.error("ERROR: Response is not a valid JSON")
     except Exception as err:
         current_function_name = inspect.currentframe().f_code.co_name
-        print(f"Unexpected error in {current_function_name}")
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
+        logger.error(f"ERROR: Unexpected error in {current_function_name}")
+        logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
+        logger.error("ERROR: Network exception occurred")
 
 
 def analyze_review_sentiments(text):
@@ -55,21 +59,23 @@ def analyze_review_sentiments(text):
         return response.json()
     except Exception as err:
         current_function_name = inspect.currentframe().f_code.co_name
-        print(f"Unexpected error in {current_function_name}")
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
+        logger.error(f"ERROR: Unexpected error in {current_function_name}")
+        logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
+        logger.error("ERROR: Network exception occurred")
 
 
 def post_review(data_dict):
     request_url = backend_url + "/insert_review"
+    logger.debug(f"DEBUG: request_url = {request_url}")
     try:
         response = requests.post(request_url, json=data_dict)
         return response.json()
     except Exception as err:
         current_function_name = inspect.currentframe().f_code.co_name
-        print(f"Unexpected error in {current_function_name}")
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
+        logger.error(f"ERROR: Unexpected error in {current_function_name}")
+        logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
+        logger.error("ERROR: Network exception occurred")
+        return {"status": 503, "message": "Backend service unavailable or network error"}
 
 
 def searchcars_request(endpoint, **kwargs):
@@ -80,13 +86,12 @@ def searchcars_request(endpoint, **kwargs):
 
     request_url = searchcars_url + endpoint + "?" + params
 
-    print(f"GET from {request_url}")
     try:
         # Call get method of requests library with URL and parameters
         response = requests.get(request_url)
         return response.json()
     except Exception as err:
         current_function_name = inspect.currentframe().f_code.co_name
-        print(f"Unexpected error in {current_function_name}")
-        print(f"Unexpected {err=}, {type(err)=}")
-        print("Network exception occurred")
+        logger.error(f"ERROR: Unexpected error in {current_function_name}")
+        logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
+        logger.error("ERROR: Network exception occurred")

@@ -1,122 +1,72 @@
-# IBM Fullstack Developer Capstone Project
+﻿# ⚛️ Frontend Application (React Framework)
 
-This repository contains a fullstack web application developed as part of the IBM Fullstack Developer Capstone Project. It demonstrates skills in frontend and backend development, microservices, and cloud deployment.
+## Overview
 
-## Table of Contents
-- [Project Description](#project-description)
-- [Architecture](#architecture)
-- [Main Features](#main-features)
-- [Technologies Used](#technologies-used)
-- [Installation and Startup](#installation-and-startup)
-- [Usage](#usage)
-- [Deployment](#deployment)
-- [Authors](#authors)
-- [License](#license)
+This directory contains the source code for the Single Page Application (SPA) built using the **React.js framework** 
+(often referred to simply as React). It serves as the client interface for the Capstone Project, interacting with the Django REST API
+to display dealer lists, car inventories, handle user authentication, and manage reviews.
 
----
+The components have been modernized to use **functional components**, **React Hooks**, and industry-standard practices
+for high performance and maintainability.
 
-## Project Description
+## Key Technologies
 
-This application simulates a car inventory management platform with:
-- A React frontend for user interaction
-- A Django backend for business logic and API services
-- A Flask microservice for sentiment analysis on user reviews
-- A Node.js microservice for vehicle inventory management
-- Docker and Kubernetes orchestration for deployment
+| Technology | Role |
+| :--- | :--- |
+| **React.js** | Core JavaScript library for building the user interface. |
+| **React Router DOM** | Handles client-side navigation (e.g., `/dealer/:id`, `/login`). |
+| **Axios** | Used for all robust HTTP requests (GET/POST) to the Django API. |
+| **CSS Files** | Styling for the application components. |
 
-## Architecture
+## Core Dependencies
 
-- Frontend[React Frontend]
-- Backend[Django Backend]
-- Sentiment[Flask Microservice (Sentiment)]
-- Inventory[Node.js Microservice (Inventory)]
-- DB[(Database)]
-- Frontend -->|REST API| Backend
-- Backend -->|REST API| Sentiment
-- Backend -->|REST API| Inventory
-- Inventory --> DB
-- Backend --> DB
+The application relies on the following major packages (installed via `npm install` in this directory):
 
-## Main Features
+* `axios`
+* `react-router-dom`
 
-- Browse car inventory
-- Add, edit, and delete vehicles (admin)
-- Submit and display user reviews
-- Automatic sentiment analysis of reviews (positive, negative, etc.)
-- Modern user interface
-- Containerized deployment (Docker/Kubernetes)
+## Code Structure
 
-## Technologies Used
+The source code is primarily located in the `src/` directory.
 
-- **Frontend:** React, Bootstrap
-- **Backend:** Django (Python)
-- **Sentiment Microservice:** Flask, NLTK
-- **Inventory Microservice:** Node.js
-- **Database:** (specify, e.g., SQLite, PostgreSQL, etc.)
-- **Deployment:** Docker, docker-compose, Kubernetes
+| Directory | Content |
+| :--- | :--- |
+| `src/components/Auth` | `Login.jsx` and `Register.jsx` components. |
+| `src/components/Dealers`| Main dealer-related components: `Dealers.jsx`, `Dealer.jsx`, `PostReview.jsx`, `SearchCars.jsx`. |
+| `src/components/Header` | The global navigation bar. |
+| `src/assets` | Static assets like images and icons. |
 
-## Installation and Startup
+### Optimized Components
 
-### Prerequisites
+The following files have been optimized to use modern React Hooks (`useCallback`, `useNavigate`, `useParams`),
+**Axios**, and robust API pathing, ensuring code consistency:
 
-- Docker and docker-compose installed
-- (Optional) Node.js, Python 3.9+ if running without Docker
+* `Login.jsx`
+* `Register.jsx`
+* `Dealers.jsx`
+* `Dealer.jsx`
+* `PostReview.jsx`
+* `SearchCars.jsx`
 
-### Quick Start with Docker Compose
+## Local Development (Outside Docker)
 
-```bash
-cd server
-docker-compose up --build
-```
-All services will be accessible on their respective ports (see the `docker-compose.yml` file).
+If you wish to run the frontend independently for rapid development, follow these steps from the root of the `frontend` directory:
 
-### Manual Startup (Development)
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-#### Frontend
+2.  **Start the Development Server:**
+    ```bash
+    npm start
+    ```
+    The application will usually open at `http://localhost:3000`.
+    **Note:** For the API calls to work, your Django backend must be running, accessible via `http://localhost:8000`,
+    or the `REACT_APP_DJANGO_URL` must be defined in your local environment shell.
 
-```bash
-cd server/frontend
-npm install
-npm start
-```
+## Docker Integration
 
-#### Django Backend
-
-```bash
-cd server
-pip install -r requirements.txt
-python manage.py runserver
-```
-
-#### Sentiment Microservice
-
-```bash
-cd server/djangoapp/microservices
-pip install -r requirements.txt
-python app.py
-```
-
-#### Inventory Microservice
-
-```bash
-cd server/carsInventory
-npm install
-node app.js
-```
-
-## Usage
-
-- Access the web interface at [http://localhost:3000](http://localhost:3000)
-- Browse inventory, submit reviews, and view sentiment analysis results
-
-## Deployment
-
-Kubernetes deployment files are provided in the `server/` directory.
-
-## Authors
-
-- OlivierR63
-
-## License
-
-See the [LICENSE](LICENSE) file for license details.
+The build process is managed by Docker Compose.
+The `Dockerfile` within this directory builds the application, and the `docker-compose.yaml` injects the necessary
+environment variables (`REACT_APP_DJANGO_URL`) to ensure connectivity with the `backend` service.

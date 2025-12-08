@@ -6,8 +6,8 @@ WORKDIR /app
 # 2. Copy only package.json & package-lock.json first
 COPY package*.json ./
 
-# 3. Install dependencies
-RUN npm install
+# 3. Install dependencies using "npm ci" for clea reproducible builds
+RUN npm ci  # Note : "ci" = "Clean Install" for production environments
 
 COPY data/car_records.json .
 

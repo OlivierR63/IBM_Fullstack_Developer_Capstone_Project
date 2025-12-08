@@ -1,67 +1,25 @@
 """djangoproj URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+This file defines the primary URL dispatching for the entire Django project.
+It separates explicit API routes from the general Single Page Application (SPA) routes.
 """
+
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
 
+# Defines the main URL patterns for the project
 urlpatterns = [
-    path(
-            'admin/',
-            admin.site.urls
-        ),
-    path(
-            'djangoapp/',
-            include('djangoapp.urls')
-        ),
-    path(
-            '',
-            TemplateView.as_view(template_name="Home.html")
-        ),
-    path(
-            'about/',
-            TemplateView.as_view(template_name="About.html")
-        ),
-    path(
-            'contact/',
-            TemplateView.as_view(template_name="Contact.html")
-        ),
-    path(
-            'login/',
-            TemplateView.as_view(template_name="index.html")
-        ),
-    path(
-            'register/',
-            TemplateView.as_view(template_name="index.html")
-        ),
-    path(
-            'dealers/',
-            TemplateView.as_view(template_name="index.html")
-        ),
-    path(
-            'dealer/<int:dealer_id>',
-            TemplateView.as_view(template_name="index.html")
-        ),
-    path(
-            'postreview/<int:dealer_id>',
-            TemplateView.as_view(template_name="index.html")
-        ),
-    path(
-            'searchcars/<int:dealer_id>',
-            TemplateView.as_view(template_name="index.html")
-        ),
+    # 1. Administration and Explicit API Routes (Must remain explicit)
+    # These paths are handled directly by Django views (Backend logic).
+    path('admin/', admin.site.urls),
+    path('djangoapp/', include('djangoapp.urls')),
+
+    # 2. Catch-All Route for Frontend (Must be the last entry)
+    # This path serves the React application's single entry point (index.html)
+    # for all UI-related routes (e.g., /, /about, /dealers).
+    # The (?!...) is a "negative lookahead" that ensures this pattern does not capture 
+    # the 'admin/' or 'djangoapp/' paths, preventing conflicts.
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

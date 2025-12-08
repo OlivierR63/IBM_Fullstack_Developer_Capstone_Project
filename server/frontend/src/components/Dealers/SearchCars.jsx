@@ -1,449 +1,242 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios'; // Import Axios for consistent HTTP requests
 import Header from '../Header/Header';
 
-
 const SearchCars = () => {
+    // --- STATE MANAGEMENT ---
     const [cars, setCars] = useState([]);
+    const [originalCars, setOriginalCars] = useState([]); // Stores the full original inventory
     const [makes, setMakes] = useState([]);
     const [models, setModels] = useState([]);
-    const [dealer, setDealer] = useState({"full_name":""});
+    const [dealer, setDealer] = useState({ "full_name": "" });
     const [message, setMessage] = useState("Loading Cars ...");
+    const [loading, setLoading] = useState(true);
 
-    let params = useParams();
-    let id = params.id;
+    // --- HOOKS & CONSTANTS ---
+    // 1. Extract ID using destructuring
+    const { id } = useParams();
 
-    let dealer_url = `/djangoapp/get_inventory/${id}`;
-    let fetch_url = `/djangoapp/dealer/${id}`;
+    // 2. Define base DJANGO URL (Robustness via environment variable)
+    const DJANGO_URL = process.env.REACT_APP_DJANGO_URL || "http:localhost:8000";
+    const normalized_DJANGO_URL = DJANGO_URL.replace(/\/$/, '');  // Remove trailing slash if present, to avoid double slashes
 
-    const fetchDealer = async () => {
-        const res = await fetch(fetch_url, {
-            method: "GET"
-        });
+    // 3. Construct API URLs
+    const dealerDetailUrl = `${normalized_DJANGO_URL}/djangoapp/dealer/${id}`;
+    const inventoryUrl = `${normalized_DJANGO_URL}/djangoapp/get_inventory/${id}`;
 
-        const retobj = await res.json();
-        if (retobj.status === 200) {
-            let dealer = retobj.dealer;
-            setDealer({"full_name": dealer[0].full_name});
-        }
-    };
-
-
-    const populateMakesAndModels = (cars)=>{
+    // --- HELPER FUNCTION ---
+    // Function to populate the Makes and Models dropdowns
+    const populateMakesAndModels = (carList) => {
         let tmpmakes = [];
         let tmpmodels = [];
-        cars.forEach((car)=>{
+        carList.forEach((car) => {
             tmpmakes.push(car.make);
             tmpmodels.push(car.model);
         });
+        // Use Set to ensure unique values, then convert back to Array for state
         setMakes(Array.from(new Set(tmpmakes)));
         setModels(Array.from(new Set(tmpmodels)));
     };
 
+    // --- DATA FETCHING FUNCTION (using useCallback and axios) ---
+    const fetchInitialData = useCallback(async () => {
+        setLoading(true);
+        setMessage("Loading Cars ...");
 
-    const fetchCars = async () => {
-        const res = await fetch(dealer_url, {
-            method: "GET"
-        });
-        const retobj = await res.json();
-
-        if (retobj.status === 200){
-            let cars = Array.from(retobj.cars);
-            setCars(cars);
-            populateMakesAndModels(cars);
-        };
-    };
-
-
-    const setCarsMatchingCriteria = async(matching_cars) => {
-        let cars = Array.from(matching_cars);
-
-        let makeIdx = document.getElementById('make').selectedIndex;
-        let modelIdx = document.getElementById('model').selectedIndex;
-        let yearIdx = document.getElementById('year').selectedIndex;
-        let mileageIdx = document.getElementById('mileage').selectedIndex;
-        let priceIdx = document.getElementById('price').selectedIndex;
-
-        if (makeIdx !== 0) {
-            let currmake = document.getElementById('make').value;
-            cars = cars.filter(car => car.make === currmake);
-        }
-
-        if (modelIdx !== 0) {
-            let currmodel = document.getElementById('model').value;
-            cars = cars.filter(car => car.model === currmodel);
-            if(cars.length !== 0){
-                document.getElementById('make').value = cars[0].make;
+        try {
+            // API Call 1: Fetch Dealer Details
+            const dealerResponse = await axios.get(dealerDetailUrl);
+            if (dealerResponse.data.status === 200 && dealerResponse.data.dealer.length > 0) {
+                setDealer({ "full_name": dealerResponse.data.dealer[0].full_name });
             }
-        }
 
-        if (yearIdx !== 0){
-            console.log(`yearIdx = ${yearIdx} et type de yearIdx = ${typeof(yearIdx)}`);
-            let curryear = document.getElementById('year').value;
-            cars = cars.filter(car => car.year >= curryear);
+            // API Call 2: Fetch Car Inventory
+            console.log("Function SearchCars.jsx : Fetching car inventory from ", inventoryUrl);
+            const inventoryResponse = await axios.get(inventoryUrl);
+            console.log("Inventory response data:", inventoryResponse.data);
+            const carList = inventoryResponse.data.cars;
+            console.log("Fetched car inventory:", carList);
 
-            if (cars.length !== 0){
-                document.getElementById('make').value =cars[0].make;
-            }
-        }
-
-        if (mileageIdx !== 0){
-            let currmileage = parseInt(document.getElementById('mileage').value);
-
-            if(currmileage === 50000){
-                cars = cars.filter(car => car.mileage <= currmileage)
-            } else if (currmileage === 100000){
-                cars = cars.filter(car => car.mileage >50000 && car.mileage <= currmileage);
-            } else if (currmileage === 150000){
-                cars = cars.filter(car => car.mileage >100000 && car.mileage <= currmileage);
-            } else if (currmileage === 200000){
-                cars = cars.filter(car => car.mileage >150000 && car.mileage <= currmileage);
+            if (inventoryResponse.data.status === 200 && carList.length > 0) {
+                setOriginalCars(carList);
+                setCars(carList);
+                populateMakesAndModels(carList);
+                setMessage("");
             } else {
-                cars = cars.filter(car => car.mileage > 200000);
+                setCars([]);
+                setOriginalCars([]);
+                setMessage("No cars found in this dealer's inventory.");
             }
+        } catch (error) {
+            console.error("Error loading car data:", error);
+            setMessage("An error occurred while loading the inventory.");
+        } finally {
+            setLoading(false);
+        }
+    }, [dealerDetailUrl, inventoryUrl]);
+
+    // --- FILTERING LOGIC ---
+
+    const SearchCarsByMake = useCallback((e) => {
+        const selected_make = e.target.value;
+        if (selected_make === 'all') {
+            setCars(originalCars);
+        } else {
+            const filteredCars = originalCars.filter(car => car.make === selected_make);
+            setCars(filteredCars);
+        }
+    }, [originalCars]);
+
+    const SearchCarsByModel = useCallback((e) => {
+        const selected_model = e.target.value;
+        if (selected_model === 'all') {
+            setCars(originalCars);
+        } else {
+            const filteredCars = originalCars.filter(car => car.model === selected_model);
+            setCars(filteredCars);
+        }
+    }, [originalCars]);
+
+    const SearchCarsByPrice = useCallback((e) => {
+        const selected_price_range = e.target.value;
+        if (selected_price_range === 'all') {
+            setCars(originalCars);
+            return;
         }
 
-        if (priceIdx !== 0) {
-            let currprice = parseInt(document.getElementById('price').value);
-            if(currprice === 20000) {
-              cars = cars.filter(car => car.price <= currprice);
-            } else if (currprice === 40000){
-              cars = cars.filter(car => car.price <= currprice && car.price > 20000);
-            } else if (currprice === 60000){
-              cars = cars.filter(car => car.price <= currprice && car.price > 40000);
-            } else if (currprice === 80000){
-              cars = cars.filter(car => car.price <= currprice && car.price > 60000);
-            } else {
-              cars = cars.filter(car => car.price > 80000);
-            }
+        let minPrice = 0;
+        let maxPrice = Infinity;
+
+        // Define price ranges
+        switch (selected_price_range) {
+            case '20000':
+                maxPrice = 20000;
+                break;
+            case '40000':
+                minPrice = 20000;
+                maxPrice = 40000;
+                break;
+            case '60000':
+                minPrice = 40000;
+                maxPrice = 60000;
+                break;
+            case '80000':
+                minPrice = 60000;
+                maxPrice = 80000;
+                break;
+            case '80001':
+                minPrice = 80000;
+                maxPrice = Infinity;
+                break;
+            default:
+                break;
         }
 
-        if (cars.length === 0){
-            setMessage("No cars found matching criteria");
-        }
+        const filteredCars = originalCars.filter(car => {
+            const price = parseFloat(car.price);
+            return price > minPrice && price <= maxPrice;
+        });
+        setCars(filteredCars);
+    }, [originalCars]);
 
-        setCars(cars);
+
+    // Reset function (uses the original state)
+    const reset = () => {
+        setCars(originalCars);
+        // Optional: Reset select states if managed separately
     };
 
+    // --- EFFECT HOOK ---
+    // Call the initial data fetch function once on mount
+    useEffect(() => {
+        fetchInitialData();
+    }, [fetchInitialData]);
 
-    let SearchCarsByMake = async () => {
-        let make = document.getElementById('make').value;
-        if(make !== 'all'){
-            dealer_url = dealer_url + "?make=" + make;
-        }
+    // --- RENDER LOGIC ---
 
-        const res = await fetch(dealer_url, {
-            method: "GET",
-            headers: {
-                'Content-type': 'application/json',
-            }
-        });
-
-        const retobj = await res.json();
-        
-        if(retobj.status === 200){
-            setCarsMatchingCriteria(retobj.cars);
-        }
-    };
-
-
-    let SearchCarsByModel = async () => {
-        let model = document.getElementById('model').value;
-        
-        if (model !== 'all'){
-            dealer_url = dealer_url + "?model=" + model;
-        }
-
-        const res = await fetch(dealer_url, {
-            method: "GET",
-            headers: {
-                'Content-type': 'application/json',
-            }
-        });
-
-        const retobj = await res.json();
-        
-        if(retobj.status === 200){
-            setCarsMatchingCriteria(retobj.cars);
-        }
-    };
-
-
-    let SearchCarsByYear = async () => {
-        let year = document.getElementById('year').value;
-
-        if (year !== 'all'){
-            dealer_url = dealer_url + "?year=" + year;
-        }
-
-        const res = await fetch(dealer_url, {
-            method: "GET",
-            headers: {
-                'Content-type': 'application/json',
-            }
-        });
-
-        const retobj = await res.json();
-        
-        if(retobj.status === 200){
-            setCarsMatchingCriteria(retobj.cars);
-        }
-    };
-
-
-    let SearchCarsByMileage = async () => {
-        let mileage = document.getElementById('mileage').value;
-        
-        if (mileage !== 'all'){
-            dealer_url = dealer_url + "?mileage=" + mileage;
-        }
-
-        const res = await fetch(dealer_url, {
-            method: "GET",
-            headers: {
-                'Content-type': 'application/json',
-            }
-        });
-
-        const retobj = await res.json();
-        
-        if(retobj.status === 200){
-            setCarsMatchingCriteria(retobj.cars);
-        }
-    };
-
-
-    let SearchCarsByPrice = async () => {
-        let price = document.getElementById('price').value;
-        
-        if (price !== 'all'){
-            dealer_url = dealer_url + "?price=" + price;
-        }
-
-        const res = await fetch(dealer_url, {
-            method: "GET",
-            headers: {
-                'Content-type': 'application/json',
-            }
-        });
-
-        const retobj = await res.json();
-        
-        if(retobj.status === 200){
-            setCarsMatchingCriteria(retobj.cars);
-        }
-    };
-
-    const reset = () =>{
-        const selectElements = document.querySelectorAll('select');
-
-        selectElements.forEach(select => {
-            select.selectedIndex = 0;
-        });
-
-        fetchCars();
+    if (loading) {
+        return (
+            <div>
+                <Header />
+                <div style={{ margin: "20px" }}>
+                    <h2>{message}</h2>
+                </div>
+            </div>
+        );
     }
 
-
-    useEffect(() => {
-        fetchCars();
-        fetchDealer();
-    }, []);
-
-    return(
+    return (
         <div>
             <Header />
-            <h1 style={{ marginBottom: '20px'}}>Cars at {dealer.full_name}</h1>
-            <div>
-                <span style={
-                                { 
-                                    marginLeft: '10px',
-                                    paddingLeft: '10px'
-                                }
-                            }>
-                    Make
-                </span>
-                <select 
-                    style = {
-                                {
-                                    marginLeft: '10px',
-                                    marginRight: '10px',
-                                    paddingLeft: '10px',
-                                    borderRadius: '10px'
-                                }
-                            }
-                            name="make"
-                            id="make"
-                            onChange={SearchCarsByMake}
-                >
-                    {
-                        makes.length === 0? (
-                            <option value=''>No data found</option>
-                        ):(
-                            <>
-                                <option selected value='all'> -- All --</option>
-                                {makes.map((make, index) => (
-                                    <option key={index} value={make}>
-                                        {make}
-                                    </option>
-                                ))}
-                            </>
-                        )
-                    }
-                </select>
+            <div style={{ margin: '10px', marginTop: '20px' }}>
+                <h2 style={{ marginLeft: '10px', color: 'darkblue' }}>
+                    Inventory for {dealer.full_name}
+                </h2>
 
-                <span style={
-                                { 
-                                    marginLeft: '10px',
-                                    paddingLeft: '10px'
-                                }
-                            }>
-                    Model
-                </span>
-                <select 
-                    style = {
-                                {
-                                    marginLeft: '10px',
-                                    marginRight: '10px',
-                                    paddingLeft: '10px',
-                                    borderRadius: '10px'
-                                }
-                            }
-                            name="model"
-                            id="model"
-                            onChange={SearchCarsByModel}
-                >
-                    {
-                        models.length === 0? (
-                            <option value=''>No data found</option>
-                        ):(
-                            <>
-                                <option selected value='all'> -- All --</option>
-                                {models.map((model, index) => (
-                                    <option key={index} value={model}>
-                                        {model}
-                                    </option>
-                                ))}
-                            </>
-                        )
-                    }
-                </select>
+                {/* Search Filters */}
+                <div style={{ display: 'flex', marginLeft: '10px', marginTop: '20px' }}>
 
-                <span style={
-                                { 
-                                    marginLeft: '10px',
-                                    paddingLeft: '10px'
-                                }
-                            }>
-                    Year
-                </span>
-                <select 
-                    style = {
-                                {
-                                    marginLeft: '10px',
-                                    marginRight: '10px',
-                                    paddingLeft: '10px',
-                                    borderRadius: '10px'
-                                }
-                            }
-                            name="year"
-                            id="year"
-                            onChange={SearchCarsByYear}
-                >
-                    <option selected value='all'> -- All -- </option>
-                    <option value='2024'>2024 or newer</option>
-                    <option value='2023'>2023 or newer</option>
-                    <option value='2022'>2022 or newer</option>
-                    <option value='2021'>2021 or newer</option>
-                    <option value='2020'>2020 or newer</option>
-                </select>
+                    {/* Filter by Make */}
+                    <span>Make: </span>
+                    <select name="make" id="make" onChange={SearchCarsByMake} style={{ marginLeft: '10px' }}>
+                        <option value='all'> -- All -- </option>
+                        {makes.map(make => (
+                            <option key={make} value={make}>{make}</option>
+                        ))}
+                    </select>
 
-                <span style={
-                                { 
-                                    marginLeft: '10px',
-                                    paddingLeft: '10px'
-                                }
-                            }>
-                    Mileage
-                </span>
-                <select 
-                    style = {
-                                {
-                                    marginLeft: '10px',
-                                    marginRight: '10px',
-                                    paddingLeft: '10px',
-                                    borderRadius: '10px'
-                                }
-                            }
-                            name="mileage"
-                            id="mileage"
-                            onChange={SearchCarsByMileage}
-                >
-                    <option selected value='all'> -- All -- </option>
-                    <option value='50000'>Under 50000</option>
-                    <option value='100000'>50000 - 100000</option>
-                    <option value='150000'>100000 - 150000</option>
-                    <option value='200000'>150000 - 200000</option>
-                    <option value='200001'>Over 200000</option>
-                </select>
+                    {/* Filter by Model */}
+                    <span style={{ marginLeft: '20px' }}>Model: </span>
+                    <select name="model" id="model" onChange={SearchCarsByModel} style={{ marginLeft: '10px' }}>
+                        <option value='all'> -- All -- </option>
+                        {models.map(model => (
+                            <option key={model} value={model}>{model}</option>
+                        ))}
+                    </select>
 
-                <span style={
-                                { 
-                                    marginLeft: '10px',
-                                    paddingLeft: '10px'
-                                }
-                            }>
-                    Price
-                </span>
-                <select 
-                    style = {
-                                {
-                                    marginLeft: '10px',
-                                    marginRight: '10px',
-                                    paddingLeft: '10px',
-                                    borderRadius: '10px'
-                                }
-                            }
-                            name="price"
-                            id="price"
-                            onChange={SearchCarsByPrice}
-                >
-                    <option selected value='all'> -- All -- </option>
-                    <option value='20000'>Under 20000</option>
-                    <option value='40000'>20000 - 40000</option>
-                    <option value='60000'>40000 - 60000</option>
-                    <option value='80000'>60000 - 80000</option>
-                    <option value='80001'>Over 80000</option>
-                </select>
+                    {/* Filter by Price */}
+                    <span style={{ marginLeft: '20px' }}>Price: </span>
+                    <select
+                        name="price"
+                        id="price"
+                        style={{ marginLeft: '10px' }}
+                        onChange={SearchCarsByPrice}
+                    >
+                        <option value='all'> -- All -- </option>
+                        <option value='20000'>Under 20000</option>
+                        <option value='40000'>20000 - 40000</option>
+                        <option value='60000'>40000 - 60000</option>
+                        <option value='80000'>60000 - 80000</option>
+                        <option value='80001'>Over 80000</option>
+                    </select>
 
-                <button style={{marginLeft: '10px', paddingLeft: '10px'}} onClick={reset}>Reset</button>
+                    <button style={{ marginLeft: '20px', padding: '5px 10px' }} onClick={reset}>Reset</button>
 
-            </div>
-
-            <div style={{ marginLeft: '10px', marginRight: '10px' , marginTop: '20px'}} >
-                {cars.length === 0 ? (
-                    <p style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px' }}>{message}</p>
-                ) : (
-                <div>
-                    <hr/>
-                    {cars.map((car) => (
-                    <div>
-                    <div key={car._id}>
-                        <h3>{car.make} {car.model}</h3>
-                        <p>Year: {car.year}</p>
-                        <p>Mileage: {car.mileage}</p>
-                        <p>Price: {car.price}</p>
-                    </div>
-                    <hr/>
-                    </div>
-                    )
-                )}
                 </div>
-                )}
-            </div>
-            
-        </div>
-    );
-};
 
-export default SearchCars;
+                {/* Display Results */}
+                <div style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px' }} >
+                    {cars.length === 0 ? (
+                        <p style={{ marginLeft: '10px', marginRight: '10px', marginTop: '20px' }}>{message}</p>
+                    ) : (
+                        <div>
+                            <hr />
+                            {cars.map((car) => (
+                                <div key={car._id} className="car_card"> {/* Added class for styling */}
+                                    <h3>{car.make} {car.model}</h3>
+                                    <p>Year: **{car.year}**</p>
+                                    <p>Mileage: **{car.mileage}**</p>
+                                    <p>Price: **${car.price.toLocaleString('en-US')}**</p>
+                                    {/* Add more car details here if needed */}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default SearchCars

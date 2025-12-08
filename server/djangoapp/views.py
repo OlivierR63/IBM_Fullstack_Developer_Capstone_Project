@@ -61,7 +61,7 @@ def registration(request):
     except Exception as err:
         print(f"Unexpected {err=}, {type(err)=}")
         # If not, simply log this is a new user
-        logger.debug("{} is new user".format(username))
+        logger.debug(f"{username} is new user")
 
     # If it is a new user
     if not username_exist:
@@ -120,15 +120,17 @@ def get_dealer_details(request, dealer_id):
 
 
 # Create a `add_review` view to submit a review
+@csrf_exempt
 def add_review(request):
     if (request.user.is_anonymous is False):
         data = json.loads(request.body)
+        logger.debug(f"DEBUG: data = {data}")
         try:
             post_review(data)
             return JsonResponse({"status": 200})
 
         except Exception as err:
-            print(f"Unexpected {err=}, {type(err)=}")
+            logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
             return JsonResponse(
                                     {
                                         "status": 500,
@@ -156,6 +158,7 @@ def get_cars(request):
     car_models = CarModel.objects.select_related('car_make')
     cars = []
     for car_model in car_models:
+        logger.debug(f"Modele: {car_model.name} et Marque: {car_model.car_make.name}")
         cars.append(
                         {
                             "CarModel": car_model.name,
