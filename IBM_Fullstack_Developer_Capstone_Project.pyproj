@@ -19,7 +19,6 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="docker-compose.yaml" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\docker-compose.yaml" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\README.md" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\app.js" />
@@ -473,9 +472,6 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Register" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\graphic_files" />
-    <Folder Include="server\" />
-    <Folder Include="server\djangoapp\" />
-    <Folder Include="server\djangoproj\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

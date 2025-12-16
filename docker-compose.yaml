@@ -12,7 +12,7 @@ services:
   # Database Node API service
   database_api:
     build:
-        context: ./database
+        context: ./server/database
         dockerfile: Dockerfile
     image: nodeapp_mongo
     ports:
@@ -26,7 +26,7 @@ services:
   # Cars Inventory Node api service
   cars_inventory_api:
     build:
-        context: ./carsInventory
+        context: ./server/carsInventory
         dockerfile: Dockerfile
     image: nodeapp_carsinventory
     ports:
@@ -45,7 +45,7 @@ services:
   sentiment_analyzer:
     build:
       # The 'build' instruction should point to the folder containing the Dockerfile
-        context: ./djangoapp/microservices
+        context: ./server/djangoapp/microservices
         dockerfile: Dockerfile
     container_name: sentiment_analyzer_app
     ports:
@@ -56,7 +56,7 @@ services:
   django_backend:
     build:
       # The Dockerfile is at the root of 'server'
-      context: .
+      context: ./server
       dockerfile: Dockerfile
     container_name: django_app
     # Command to run the Django development server
@@ -86,7 +86,7 @@ services:
   frontend:
     build:
       # Point to the folder containing the Dockerfile for the frontend
-      context: ./frontend
+      context: ./server/frontend
       dockerfile: Dockerfile
     container_name: frontend_app
     volumes:
