@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ['*']
 
 # If DEBUG=True, Django allows Cross-Origin requests on hosts.
 # For local development, we trust standard and secure origins.
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000'] 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
 
 # --- END OF MODIFICATIONS FOR LOCAL DOCKER ---
 
@@ -63,6 +63,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware', 
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -138,7 +139,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -160,4 +160,40 @@ STATICFILES_DIRS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
+
+CORS_ALLOW_CREDENTIALS = True
+
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        }
+    },
+    'loggers': {
+        # 'djangoapp' est le nom de votre application
+        'djangoapp': {
+            'handlers': ['console'],
+            'level': 'DEBUG', # Niveau de log le plus bas pour afficher DEBUG, INFO, WARNING, ERROR, CRITICAL
+            'propagate': True,
+        },
+        # Pour voir les logs du framework Django lui-même
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO', 
+            'propagate': False,
+        },
+    }
+}

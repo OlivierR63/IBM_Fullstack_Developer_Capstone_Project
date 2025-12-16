@@ -15,6 +15,7 @@ const port = 3030; // Internal port exposed by this Docker service
 
 // Configure Express middleware
 app.use(cors()); // Enable CORS for all routes
+
 // Use body-parser configuration to handle URL-encoded form data (though JSON parsing is handled later)
 app.use(require('body-parser').urlencoded({ extended: false }));
 
@@ -39,6 +40,7 @@ try {
     Reviews.deleteMany({}).then(() => {
         Reviews.insertMany(reviews_data.reviews);
     });
+
     // Delete all existing dealership documents, then insert the initial set of dealerships
     Dealerships.deleteMany({}).then(() => {
         Dealerships.insertMany(dealerships_data.dealerships);

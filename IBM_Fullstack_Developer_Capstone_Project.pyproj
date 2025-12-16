@@ -19,6 +19,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="docker-compose.yaml" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\app.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\inventory.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\accepts\index.js" />
@@ -258,6 +259,7 @@
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\public\robots.txt" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\App.css" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\App.js" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\About\About.jsx" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\bootstrap.min.css" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\close.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\email.png" />
@@ -270,9 +272,18 @@
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\reviewbutton.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\reviewicon.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets\style.css" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Contact\Contact.jsx" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers\Dealer.jsx" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers\Dealers.css" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers\Dealers.jsx" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers\PostReview.jsx" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers\SearchCars.jsx" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Header\Header.jsx" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Home\Home.jsx" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Login\Login.css" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Login\Login.jsx" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Register\Register.css" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Register\Register.jsx" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\index.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\About.html" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\bootstrap.min.css" />
@@ -304,12 +315,16 @@
     <Compile Include="IBM_Fullstack_Developer_Capstone_Project\server\manage.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\accepts" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\array-flatten" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\body-parser" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bson\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bson\etc" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bson\vendor\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bson\vendor\base64" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bson\vendor\text-encoding" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\bytes" />
@@ -354,6 +369,7 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\has-symbols\test\shams" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\hasown" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\http-errors" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\iconv-lite\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\iconv-lite\encodings" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\inherits" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\ipaddr.js" />
@@ -369,12 +385,18 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mime-db" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mime-types" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mime\src" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongodb\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongodb\etc" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongoose" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongoose\node_modules\" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongoose\node_modules\mongodb\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongoose\node_modules\mongodb\etc" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mongoose\node_modules\ms" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mpath" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mpath\test" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mquery\" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mquery\node_modules\" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mquery\node_modules\debug\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mquery\node_modules\debug\src" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\mquery\node_modules\ms" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\ms" />
@@ -389,12 +411,14 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\path-to-regexp" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\proxy-addr" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\punycode" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\qs\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\qs\test" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\range-parser" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\raw-body" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\safe-buffer" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\safer-buffer" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\send" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\send\node_modules\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\send\node_modules\encodeurl" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\send\node_modules\ms" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\serve-static" />
@@ -424,14 +448,21 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoapp" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoapp\microservices" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoproj" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\static\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\static\css" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\static\js" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\static\media" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\public" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\About\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\assets" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Contact\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Dealers" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Header\" />
+    <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Home\" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Login" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Register" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static" />

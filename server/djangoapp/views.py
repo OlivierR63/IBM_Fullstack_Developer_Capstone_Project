@@ -122,29 +122,53 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 @csrf_exempt
 def add_review(request):
-    if (request.user.is_anonymous is False):
-        data = json.loads(request.body)
-        logger.debug(f"DEBUG: data = {data}")
-        try:
-            post_review(data)
-            return JsonResponse({"status": 200})
-
-        except Exception as err:
-            logger.error(f"ERROR: Unexpected {err=}, {type(err)=}")
-            return JsonResponse(
-                                    {
-                                        "status": 500,
-                                        "message": "Error in posting review"
-                                    },
-                                    status=500
-                                )
-    else:
+    # Authentication check to ensure only logged-in users can post reviews.
+    if (not request.user.is_authenticated ):
         return JsonResponse(
                                 {
                                     "status": 403,
                                     "message": "Unauthorized"
                                 },
                                 status=403
+                            )
+
+    data = json.loads(request.body)
+
+    # Ensure the username is passed, overriding any name provided by the frontend
+    # to guarantee consistency with the authenticated user.
+    try:
+        full_name = f"{request.user.first_name} {request.user.last_name}".strip()
+        if not full_name:
+            full_name = request.user.username
+        data['name'] = full_name
+
+        # Log the final payload being sent to the external API
+        logger.info(f"DEBUG: Review payload for post_review = {data}")
+
+        # Post the review using the external REST API function
+        # The external post_review function should handle the data format required by the service.
+        post_review(data)
+
+        return JsonResponse({"status": 200, "message": "Review submitted successfully"})
+
+    except json.JSONDecodeError:
+        logger.error("ERROR: Failed to decode JSON from request body.")
+        return JsonResponse(
+                               {
+                                   "status": 400,
+                                   "message": "Invalid JSON format in request body"
+                                },
+                                status=400
+                            )
+
+    except Exception as err:
+        logger.error(f"ERROR: Unexpected {err=}, {type(err)=} during review posting.")
+        return JsonResponse(
+                               {
+                                   "status": 500,
+                                   "message": "Error in posting review to external service"
+                                },
+                                status=500
                             )
 
 

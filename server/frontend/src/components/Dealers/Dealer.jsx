@@ -80,7 +80,7 @@ const Dealer = () => {
             < div >
                 <Header />
                 <div style={{ margin: "20px" }}>
-                    <text>Loading Dealer details and reviews...</text>
+                    <h4>Loading Dealer details and reviews...</h4>
                 </div>
             </div >
 

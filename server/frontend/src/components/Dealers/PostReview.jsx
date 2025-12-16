@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import {
+    useParams,
+    useNavigate,
+} from 'react-router-dom'; // Import useNavigate for redirection
 import axios from 'axios'; // Import Axios for consistent HTTP requests
 import "./Dealers.css";
 import "../assets/style.css";
@@ -17,6 +20,7 @@ const PostReview = () => {
     const [date, setDate] = useState("");
     const [carmodels, setCarmodels] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState("");  // Replace alert()
 
     // --- HOOKS & CONSTANTS ---
     // Extract ID using destructuring
@@ -24,7 +28,7 @@ const PostReview = () => {
     const navigate = useNavigate(); // Hook for programmatic navigation
 
     // Define base DJANGO URL using environment variable (robustness)
-    const DJANGO_URL = process.env.REACT_APP_DJANGO_URL || "http:localhost:8000";
+    const DJANGO_URL = process.env.REACT_APP_DJANGO_URL || "http://localhost:8000";
     const normalized_DJANGO_URL = DJANGO_URL.replace(/\/$/, '');  // Remove trailing slash if present, to avoid double slashes
 
     // Construct API URLs
@@ -36,11 +40,18 @@ const PostReview = () => {
     const isLoggedIn = sessionStorage.getItem("username") != null;
     const currentYear = new Date().getFullYear();
 
+    // Message management function
+    const displayMessage = (text, isSuccess = false) => {
+        console.log(`[User Feedback]: ${text}`);
+        setMessage(text);
+        setTimeout(() => setMessage(""), 5000);
+    };
+
     // --- DATA FETCHING FUNCTION ---
     // Fetch initial dealer and car models data (memoized)
     const fetchInitialData = useCallback(async () => {
         if (!isLoggedIn) {
-            alert("You must be logged in to post a review.");
+            displayMessage("You must be logged in to post a review.");
             navigate('/login');
             return;
         }
@@ -48,7 +59,7 @@ const PostReview = () => {
 
         try {
             // API Call 1: Fetch Dealer Details (to display the dealer's name)
-            const dealerResponse = await axios.get(dealerDetailUrl);
+            const dealerResponse = await axios.get(dealerDetailUrl, {withCredentials: true});
             const dealerData = dealerResponse.data;
             if (dealerData.status === 200 && dealerData.dealer.length > 0) {
                 setDealer(dealerData.dealer[0]);
@@ -83,14 +94,13 @@ const PostReview = () => {
         e.preventDefault(); // Prevent default form submission
 
         // 1. Get user identity: use username if first/last name are not available
-        let name = sessionStorage.getItem("firstname") + " " + sessionStorage.getItem("lastname");
-        if (name.includes("null") || !name.trim()) {
-            name = sessionStorage.getItem("username");
-        }
+        const firstName = sessionStorage.getItem("firstname");
+        const lastName = sessionStorage.getItem("lastname");
+        let name = (firstName && lastName) ? `${firstName} ${lastName}` : sessionStorage.getItem("username");
 
         // 2. Data Validation
         if (review === "" || date === "" || year === "" || carModelSelection === "") {
-            alert("Please fill in all review fields (Review Text, Purchase Date, Car Model, and Car Year).");
+            displayMessage("Please fill in all review fields (Review Text, Purchase Date, Car Model, and Car Year).");
             return;
         }
 
@@ -104,8 +114,9 @@ const PostReview = () => {
             car_make: car_make,
             car_model: car_model,
             car_year: year,
+            purchase: true,
             purchase_date: date,
-            dealer_id: id,
+            dealership: id,
             name: name,
         };
 
@@ -113,19 +124,21 @@ const PostReview = () => {
         try {
             console.log("addReviewUrl = ", addReviewUrl);
             console.log("Review payload =", payload);
-            const res = await axios.post(addReviewUrl, payload);
+
+            // Note add argument "{withCredentials: true}" for django authentification
+            const res = await axios.post(addReviewUrl, payload, {withCredentials: true});
             console.log("Review post response data:", res.data);
 
             if (res.data.status === 200) {
-                alert("Review submitted successfully!");
+                displayMessage("Review submitted successfully!");
                 // Redirect back to the dealer detail page after success
                 navigate(`/dealer/${id}`);
             } else {
-                alert(`Review submission failed: ${res.data.message || 'Server error'}`);
+                displayMessage(`Review submission failed: ${res.data.message || 'Server error'}`);
             }
         } catch (error) {
             console.error("Review posting failed:", error);
-            alert(`An error occurred while posting the review. Please check the console.`);
+            displayMessage(`An error occurred while posting the review. Please check the console.`);
         }
     };
 
@@ -148,6 +161,11 @@ const PostReview = () => {
         <div>
             <Header />
             <div style={{ margin: "5%" }}>
+                {message && (
+                    <div style={{ padding: '10px', backgroundColor: 'lightblue', borderRadius: '5px', marginBottom: '20px' }}>
+                        {message}
+                    </div>
+                )}
                 <h1 style={{ color: "darkblue" }}>Post a Review for {dealer.full_name}</h1>
 
                 {/* Use a proper HTML form to handle submission via 'Enter' key and 'Submit' button */}
