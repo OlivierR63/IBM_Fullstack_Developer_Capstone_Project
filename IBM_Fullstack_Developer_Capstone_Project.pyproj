@@ -20,6 +20,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="docker-compose.yaml" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\docker-compose.yaml" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\README.md" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\app.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\inventory.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\carsInventory\node_modules\accepts\index.js" />
@@ -300,6 +302,7 @@
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\graphic_files\person.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\Home.html" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\style.css" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\README.md" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\requirements.txt" />
   </ItemGroup>
   <ItemGroup>

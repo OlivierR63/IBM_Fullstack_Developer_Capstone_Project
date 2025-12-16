@@ -1,72 +1,93 @@
-﻿# ⚛️ Frontend Application (React Framework)
+﻿# Automobile Dealership Full-Stack Application
 
 ## Overview
+This project is a comprehensive **Full-Stack Management System** designed for a national automobile dealership network. It enables users to explore dealer locations, view live car inventories, and manage customer reviews. A key feature is the integrated **Sentiment Analysis**, which automatically evaluates the tone of customer feedback.
 
-This directory contains the source code for the Single Page Application (SPA) built using the **React.js framework** 
-(often referred to simply as React). It serves as the client interface for the Capstone Project, interacting with the Django REST API
-to display dealer lists, car inventories, handle user authentication, and manage reviews.
+The application is built on a **Microservices Architecture**, leveraging a polyglot technical stack (Python, Node.js, and React) orchestrated through **Docker Compose** for seamless deployment.
 
-The components have been modernized to use **functional components**, **React Hooks**, and industry-standard practices
-for high performance and maintainability.
+---
 
-## Key Technologies
+## High-Level Architecture
 
-| Technology | Role |
-| :--- | :--- |
-| **React.js** | Core JavaScript library for building the user interface. |
-| **React Router DOM** | Handles client-side navigation (e.g., `/dealer/:id`, `/login`). |
-| **Axios** | Used for all robust HTTP requests (GET/POST) to the Django API. |
-| **CSS Files** | Styling for the application components. |
+The system consists of independent services that interact through RESTful APIs. The communication flow is strictly defined:
 
-## Core Dependencies
+* **Frontend-to-Backend**: The **React Frontend** uses the **Axios** library to perform asynchronous HTTP requests to the Django API Gateway.
+* **Internal Service Mesh**: The **Django Backend** acts as a central orchestrator. It uses the Python **Requests** library to communicate internally with the Node.js and Flask microservices.
 
-The application relies on the following major packages (installed via `npm install` in this directory):
+### Data Persistence Strategy
+The project utilizes a dual-database approach to optimize data management:
+1.  **SQLite (Relational)**: Embedded within the Django service. It manages "system" data, including User authentication, sessions, and the master catalog of Car Makes and Models.
+2.  **MongoDB (NoSQL)**: A dedicated document store used by the Node.js microservices. It handles unstructured or semi-structured data like Dealership details and Customer Reviews.
 
-* `axios`
-* `react-router-dom`
+---
 
-## Code Structure
+## Project Structure (Macro View)
 
-The source code is primarily located in the `src/` directory.
+├── server/                 # All backend and microservices logic
 
-| Directory | Content |
-| :--- | :--- |
-| `src/components/Auth` | `Login.jsx` and `Register.jsx` components. |
-| `src/components/Dealers`| Main dealer-related components: `Dealers.jsx`, `Dealer.jsx`, `PostReview.jsx`, `SearchCars.jsx`. |
-| `src/components/Header` | The global navigation bar. |
-| `src/assets` | Static assets like images and icons. |
+│   ├── djangoapp/          # Django App (API Gateway, Auth, SQLite ORM)
 
-### Optimized Components
+│   ├── djangoproj/         # Project-wide Django configuration
 
-The following files have been optimized to use modern React Hooks (`useCallback`, `useNavigate`, `useParams`),
-**Axios**, and robust API pathing, ensuring code consistency:
+│   ├── database/           # Node.js service for Dealer/Review data (MongoDB)
 
-* `Login.jsx`
-* `Register.jsx`
-* `Dealers.jsx`
-* `Dealer.jsx`
-* `PostReview.jsx`
-* `SearchCars.jsx`
+│   ├── carsInventory/      # Node.js service for Car inventory (MongoDB)
 
-## Local Development (Outside Docker)
+│   └── microservices/      # Flask service for NLP Sentiment Analysis
 
-If you wish to run the frontend independently for rapid development, follow these steps from the root of the `frontend` directory:
+├── frontend/               # React.js application (Axios-based UI)
 
-1.  **Install Dependencies:**
-    ```bash
-    npm install
-    ```
+├── docker-compose.yaml     # Container orchestration and networking
 
-2.  **Start the Development Server:**
-    ```bash
-    npm start
-    ```
-    The application will usually open at `http://localhost:3000`.
-    **Note:** For the API calls to work, your Django backend must be running, accessible via `http://localhost:8000`,
-    or the `REACT_APP_DJANGO_URL` must be defined in your local environment shell.
+├── .jshintrc               # JavaScript linting configuration
 
-## Docker Integration
+└── README.md               # Main project documentation (this file)
 
-The build process is managed by Docker Compose.
-The `Dockerfile` within this directory builds the application, and the `docker-compose.yaml` injects the necessary
-environment variables (`REACT_APP_DJANGO_URL`) to ensure connectivity with the `backend` service.
+---
+
+## Deployment & Getting Started
+
+### Prerequisites
+* **Docker Desktop** (version 20.10+ recommended)
+* **Docker Compose**
+
+### Global Installation
+To build the images and launch the entire ecosystem (containers, networks, and volumes), run the following command from the root directory:
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Accessing the Application
+
+Once the build is complete and containers are healthy, you can access the different layers of the ecosystem at the following addresses:
+
+* **User Interface**: [http://localhost:3000](http://localhost:3000)
+* **Django Admin Panel**: [http://localhost:8000/admin](http://localhost:8000/admin)
+* **Database API Node**: [http://localhost:3030](http://localhost:3030)
+* **Sentiment Analyzer**: [http://localhost:5000](http://localhost:5000)
+
+---
+
+## Technology Stack Summary
+
+| Layer | Technology | Key Communication Library |
+| :--- | :--- | :--- |
+| **User Interface** | React.js | **Axios** |
+| **API Gateway** | Django (Python) | **Requests** |
+| **System Database** | **SQLite** | Django ORM |
+| **Document Store** | **MongoDB** | Mongoose (Node.js Driver) |
+| **NLP Engine** | Flask (Python) | NLTK (VADER Lexicon) |
+| **Orchestration** | Docker | Docker Compose |
+
+---
+
+## Documentation Hierarchy
+
+This file provides a high-level "macro" overview. For deep-dive technical details on specific modules, please refer to their respective documentation files:
+
+* **`frontend/README.md`**: Detailed view of UI components and React state management.
+* **`server/djangoapp/README.md`**: Deep dive into Django views, Authentication logic, and SQLite models.
+* **`server/database/README.md`**: Full documentation on MongoDB schemas and Node.js API endpoints.
