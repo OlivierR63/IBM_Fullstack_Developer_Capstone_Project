@@ -18,7 +18,7 @@ The core components of the application are structured here:
 | **`frontend`** | Contains the source code for the **React.js client application**. This is the user interface accessible on `http://localhost:3000`. | 
 | **`djangoproj`** | Contains the global configuration and settings for the **Django backend project**. | 
 | **`djangoapp`** | Contains the specific application logic, including Models, Views (API endpoints), and data retrieval functions for the **Django backend**. | 
-| **`database` ** | Scripts for database initialization or configuration. | 
+| **`database`** | Scripts for database initialization or configuration. | 
 
 ## Running via Docker
 
