@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+# Frontend Application (React)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This directory contains the source code, configuration, and build artifacts for the single-page application (SPA) that provides the user interface for the dealership application. It is built using **React** and is deployed as a static application via Docker.
 
-## Available Scripts
+## 1. Directory Structure Overview
 
-In the project directory, you can run:
+The frontend follows a typical React project structure, with a separation between source files, build outputs, and third-party dependencies.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+frontend/
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+??? build/             # ?? Output of the production build
 
-### `npm test`
+??? node_modules/      # ?? Third-party libraries (Dependencies)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+??? public/            # ?? Static assets (HTML template, Favicon)
 
-### `npm run build`
+??? src/               # Core application source code
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+?   ??? components/    # Reusable UI components
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+?   ??? images/        # Application-wide image assets
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+?   ??? App.js         # Main application component
 
-### `npm run eject`
+?   ??? index.js       # Entry point for React rendering
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+?   ??? App.css        # Global application styles
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+??? static/            # Legacy files (Relics from initial version)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+??? Dockerfile         # Docker instructions for building and serving the app
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+??? package.json       # Project configuration and dependencies
 
-## Learn More
+??? package-lock.json  # Locked dependency versions
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 2. Key Files and Configuration
 
-### Analyzing the Bundle Size
+| File | Role | Description |
+| :--- | :--- | :--- |
+| `package.json` | **Configuration** | Lists all development and production dependencies (`react`, `axios`, etc.) and defines build scripts (`start`, `build`). |
+| `Dockerfile` | **Deployment** | Contains the steps to build the React application and serve the resulting static files using a minimal server (e.g., Nginx or a lightweight Node server). |
+| `App.js` | **Routing** | Defines the main structure and routing logic for the entire SPA, linking different components like `Home` and `Dealer Details`. |
+| `index.js` | **Entry Point** | The initial JavaScript file executed by the browser; responsible for mounting the root `App.js` component to the HTML DOM. |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 3. Detailed Directory Breakdown
 
-### Making a Progressive Web App
+### `src/` (Source Code)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+This is the main development workspace containing all the logic and rendering components.
 
-### Advanced Configuration
+| Directory / File | Role | Contents |
+| :--- | :--- | :--- |
+| `src/components/` | **UI Components** | Contains the core logic for the graphical interface: `About`, `Contact`, `Dealers`, `Header`, `Home`, `Login`, and `Register`. |
+| `src/components/assets/` | **Styles & Graphics** | Stores static resources directly related to components, including global styles (`style.css`) and third-party stylesheets (`bootstrap.min.css`). |
+| `src/images/` | **Image Pool** | Holds various graphical files used throughout the user interface. |
+| `src/App.css` | **Global Styles** | Contains CSS rules applied globally to the application. |
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### `build/` (Build Output)
 
-### Deployment
+This directory is generated when the application is compiled for production (using `npm run build`).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* **Origin:** Created by the React build tool (e.g., Vite or Create React App).
+* **Role:** Contains the final **minified and optimized static assets** (HTML, CSS, JavaScript bundles) ready for deployment. This is the content served by the Docker container.
 
-### `npm run build` fails to minify
+### `node_modules/` (Dependencies)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This directory stores all the code for the third-party libraries listed in `package.json`.
+
+* **Origin:** Generated by the `npm install` command.
+* **Role:** Essential for running the application, as it contains React, React Router, Axios, and all other necessary tools and libraries. This directory is typically very large and ignored in version control (`.gitignore`).
+
+### `public/` (Static Assets)
+
+This directory holds files that are copied directly into the `build/` folder without being processed by the build pipeline.
+
+* **Origin:** Defined in the project setup (e.g., `public/index.html` is the main template).
+* **Role:** Contains the main HTML file (`index.html`) used as the template for the SPA, as well as static files like the application favicon.
+
+### `static/` (Legacy Relics)
+
+This directory contains files that are no longer actively used by the React application.
+
+* **Origin:** Leftover files from the application's initial, non-React version (e.g., raw HTML files defining the interface).
+* **Role:** **Relic/Historical** — These files are not part of the current production workflow and should be considered deprecated.

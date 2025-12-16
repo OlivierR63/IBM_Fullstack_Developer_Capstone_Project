@@ -236,6 +236,8 @@
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\database\inventory.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\database\review.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoapp\microservices\requirements.txt" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoapp\README.md" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\djangoproj\README.md" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\favicon.ico" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\index.html" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\build\logo192.png" />
@@ -257,6 +259,7 @@
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\public\logo192.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\public\logo512.png" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\public\robots.txt" />
+    <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\README.md" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\App.css" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\App.js" />
     <Content Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\About\About.jsx" />
@@ -467,6 +470,9 @@
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\src\components\Register" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static" />
     <Folder Include="IBM_Fullstack_Developer_Capstone_Project\server\frontend\static\graphic_files" />
+    <Folder Include="server\" />
+    <Folder Include="server\djangoapp\" />
+    <Folder Include="server\djangoproj\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
