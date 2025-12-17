@@ -64,7 +64,7 @@ services:
     #                                                        runs Gunicorn instead
     volumes:
       # Mount the source code for the development convenience
-      - .:/app
+      - ./server:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -86,7 +86,7 @@ services:
   frontend:
     build:
       # Point to the folder containing the Dockerfile for the frontend
-      context: ./server/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend_app
     volumes:

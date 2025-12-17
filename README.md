@@ -9,40 +9,38 @@ The application is built on a **Microservices Architecture**, leveraging a polyg
 
 ## High-Level Architecture
 
-The system consists of independent services that interact through RESTful APIs. The communication flow is strictly defined:
+The system consists of independent services interacting through RESTful APIs. The communication flow is strictly defined:
 
 * **Frontend-to-Backend**: The **React Frontend** uses the **Axios** library to perform asynchronous HTTP requests to the Django API Gateway.
-* **Internal Service Mesh**: The **Django Backend** acts as a central orchestrator. It uses the Python **Requests** library to communicate internally with the Node.js and Flask microservices.
+* **Internal Service Mesh**: The **Django Backend** acts as a central orchestrator. It uses the Python **Requests** library to communicate internally with Node.js and Flask microservices.
 
 ### Data Persistence Strategy
-The project utilizes a dual-database approach to optimize data management:
-1.  **SQLite (Relational)**: Embedded within the Django service. It manages "system" data, including User authentication, sessions, and the master catalog of Car Makes and Models.
-2.  **MongoDB (NoSQL)**: A dedicated document store used by the Node.js microservices. It handles unstructured or semi-structured data like Dealership details and Customer Reviews.
+The project utilizes a dual-database approach:
+1.  **SQLite (Relational)**: Embedded within the Django service. It manages system data, including user authentication, sessions, and the master catalog of Car Makes and Models.
+2.  **MongoDB (NoSQL)**: A dedicated document store used by the Node.js microservices. It handles unstructured data like dealership details and customer reviews.
 
 ---
 
-## Project Structure (Macro View)
+## Project Structure (Updated)
 
-├── server/                 # All backend and microservices logic
+Following the architectural migration, the project is organized to separate the Client (Frontend) from the Server-side services.
 
+```text
+IBM_Fullstack_Capstone/
+├── server/                 # Server-side logic & Microservices
 │   ├── djangoapp/          # Django App (API Gateway, Auth, SQLite ORM)
-
 │   ├── djangoproj/         # Project-wide Django configuration
-
 │   ├── database/           # Node.js service for Dealer/Review data (MongoDB)
-
 │   ├── carsInventory/      # Node.js service for Car inventory (MongoDB)
-
-│   └── microservices/      # Flask service for NLP Sentiment Analysis
-
-├── frontend/               # React.js application (Axios-based UI)
-
-├── docker-compose.yaml     # Container orchestration and networking
-
-├── .jshintrc               # JavaScript linting configuration
-
+│   ├── djangoapp/microservices/ # Flask service for NLP Sentiment Analysis
+│   ├── Dockerfile          # Django Backend Docker configuration
+│   └── entrypoint.sh       # Backend startup script (migrations & server)
+├── frontend/               # React.js application (User Interface)
+│   ├── src/                # React components and UI logic
+│   ├── public/             # Static assets
+│   └── Dockerfile          # Frontend Docker configuration
+├── docker-compose.yaml      # Unified Orchestrator (Single Source of Truth)
 └── README.md               # Main project documentation (this file)
-
 ---
 
 ## Deployment & Getting Started
@@ -66,8 +64,8 @@ Once the build is complete and containers are healthy, you can access the differ
 
 * **User Interface**: [http://localhost:3000](http://localhost:3000)
 * **Django Admin Panel**: [http://localhost:8000/admin](http://localhost:8000/admin)
-* **Database API Node**: [http://localhost:3030](http://localhost:3030)
-* **Sentiment Analyzer**: [http://localhost:5000](http://localhost:5000)
+* **Database API (Node)**: [http://localhost:3030](http://localhost:3030)
+* **Sentiment Analyzer (Flask)**: [http://localhost:5000](http://localhost:5000)
 
 ---
 

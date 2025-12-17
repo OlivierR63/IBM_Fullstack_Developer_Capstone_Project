@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="/static/bootstrap.min.css">
+        <style>
+            .full-container{
+                margin: 15px 0; /* Uniform top and bottom margins*/
+                width:90vw;
+                height:calc(80vh - 30px); /* Adjusts the height taking into account the margins */
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform: translate(-50%, -50%);
+                overflow: hidden;
+                border-radius: 35px;
+                box-shadow: 4px 0 8px rgba(0,0,0,0.5);
+                background-color:white;
+            }
+            .upper-container{
+                display:flex;
+                height: 50%;
+                overflow: hidden;
+                justify-content: center;
+                align-items: center;
+            }
+            .lower-container{
+                height: 50%;
+                overflow: hidden;
+                display:flex;
+                position:relative;
+            }
+            .lower-left, .lower-right{
+                width: 50%;
+                overflow: hidden;
+            }
+            .lower-left{
+                display: flex;
+                justify-content : center;
+                align-items: center;
+                object-fit: contain;
+            }
+            .lower-left-inner{
+                display: flex;
+                height: 90%;
+                width : 100%;
+                position: relative;
+                justify-content : center;
+                align-items: center;
+                object-fit: contain;
+                border-right: 5px solid blue;
+            }
+            .lower-right{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                overflow: hidden;
+                padding: 10px 0;
+            }
+            img{
+                max-width: 100%;
+                width: auto;
+                height: 100%;
+            }
+            .upper-container img{
+                max-width: 100%;
+                width: auto;
+                height: 90%;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color:darkturquoise; height: 1in;">
+            <div class="container-fluid">
+                <h2 style="padding-right: 5%;">Dealerships</h2>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarText">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" style="font-size: larger;" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" style="font-size: larger;" href="/about">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" style="font-size: larger;" href="/contact">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="full-container">
+            <div class="upper-container">
+                <img class = "img-fluid" 
+                    src="/static/graphic_files/cars.jpeg" 
+                    alt="Image of Dealerships' parking area"  
+                    style="object-fit:contain">
+            </div>
+            <div class="lower-container">
+                <div class="lower-left">
+                    <div class="lower-left-inner">
+                        <img class="img-fluid" 
+                            src="/static/graphic_files/contactus.png" 
+                            alt="Image of hotline call signage"
+                            style="object-fit:contain">
+                    </div>
+                </div>
+                <div class="lower-right">
+                    <div style="font-size: 20px; color: blue;">
+                        <strong>Contact Customer Service</strong><br>
+                        support@bestcars.com<br>
+                        <strong>Contact our National Advertising Team</strong><br>
+                        NationalSales@bestcars.com<br>
+                        <strong>Contact our Public Relations team</strong><br>
+                        PR@bestcars.com<br>
+                        <strong>Contact the bestcars.com offices</strong><br>
+                        312-011-1111<br>
+                        <strong>Become a bestcars.com car dealer</strong><br>
+                        <strong>Visit growwithbestcars.com</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
