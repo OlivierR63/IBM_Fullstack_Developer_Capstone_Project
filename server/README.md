@@ -26,43 +26,50 @@ The backend logic and internal services are structured as follows:
 
 The system uses a containerized microservices architecture. The Django Backend acts as the **API Gateway**, centralizing requests from the React Frontend and distributing them to the specialized internal services.
 
-### 1. Component Architecture Diagram
+## 1. Component Architecture Diagram
 
-This diagram illustrates the updated flow where the Frontend and Server reside as sibling services within the Docker network.
+The system follows a **Decoupled SPA (Single Page Application)** architecture. It is essential to distinguish between the **initial load** (downloading the UI) and the **runtime** (data exchange).
 
-
+* **Initial Load**: The browser requests the static React assets from the `frontend` service (port 3000).
+* **Runtime**: Once loaded, the React application runs directly in the user's browser and performs direct API calls to the **Django API Gateway** (port 8000) using Axios.
 
 ```mermaid
-graph LR
-    subgraph Host Machine
-        Browser(Web Browser)
+graph TD
+    subgraph User_Machine [User's Computer / Browser]
+        UI[React UI - Running in Browser]
     end
-    
-    subgraph Docker Network
-        Frontend(React Application - :3000)
-        DjangoBackend(Django API Gateway - :8000)
-        SentimentAPI(Flask/Sentiment Analysis - :5000)
-        InventoryAPI(Node/Inventory - :3050)
-        DatabaseAPI(Node/Dealerships - :3030)
-        MongoDB(MongoDB Database - :27017)
+
+    subgraph Docker_Network [Docker Network]
+        direction TB
+        Frontend_Srv(Frontend Service - :3000)
+        Django_GW(Django API Gateway - :8000)
+        
+        subgraph Internal_Microservices [Internal Microservices]
+            Sentiment(Sentiment Flask - :5000)
+            Inventory(Inventory Node - :3050)
+            Data_API(Database Node - :3030)
+        end
+        
+        DB[(MongoDB - :27017)]
     end
+
+    %% Flow of files
+    User_Machine -- 1. Downloads JS/HTML Bundle --> Frontend_Srv
     
-    Browser -- UI Access --> Frontend
-    Browser -- API Calls --> DjangoBackend
+    %% Flow of data
+    UI -- 2. Direct API Calls (Axios) --> Django_GW
     
-    DjangoBackend -- REST --> SentimentAPI
-    DjangoBackend -- REST --> InventoryAPI
-    DjangoBackend -- REST --> DatabaseAPI
+    %% Internal orchestration
+    Django_GW -- REST --> Sentiment
+    Django_GW -- REST --> Inventory
+    Django_GW -- REST --> Data_API
     
-    InventoryAPI -- Access --> MongoDB
-    DatabaseAPI -- Access --> MongoDB
-    
-    style Frontend fill:#cceeff,stroke:#3377ff
-    style DjangoBackend fill:#aaffcc,stroke:#00aa44
-    style SentimentAPI fill:#ffccaa,stroke:#ff6600
-    style InventoryAPI fill:#ffccaa,stroke:#ff6600
-    style DatabaseAPI fill:#ffccaa,stroke:#ff6600
-    style MongoDB fill:#f0f0f0,stroke:#666666
+    Inventory -- Mongoose --> DB
+    Data_API -- Mongoose --> DB
+
+    style UI fill:#cceeff,stroke:#3377ff
+    style Django_GW fill:#aaffcc,stroke:#00aa44
+    style DB fill:#f0f0f0,stroke:#666666
 ```
 
 ## 2. Service Roles (Server Context)
@@ -74,3 +81,12 @@ graph LR
 | **InventoryAPI** | Node.js microservice for managing car inventory. | 3050 |
 | **DatabaseAPI** | Node.js service for dealership and review documents. | 3030 |
 | **MongoDB** | NoSQL Data storage for dealerships and reviews. | 27018 |
+
+
+## Development Notes
+
+* **Docker Build**: The `Dockerfile` in this directory builds the Django image. It copies the entire `server/` content into the container's `/app` folder.
+* **Entrypoint**: The `entrypoint.sh` script automates database migrations and collects static files before launching the Django server.
+* **Database Dual-Storage**: 
+    * **SQLite**: Used locally within Django for User Auth and Car Models.
+    * **MongoDB**: Used by Node.js microservices for unstructured Dealership and Review data.

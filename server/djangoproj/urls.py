@@ -20,6 +20,6 @@ urlpatterns = [
     # 2. Catch-All Route for Frontend (Must be the last entry)
     # This path serves the React application's single entry point (index.html)
     # for all UI-related routes (e.g., /, /about, /dealers).
-    # The (?!...) is a "negative lookahead" that ensures this pattern does not capture 
+    # The (?!...) is a "negative lookahead" that ensures this pattern does not capture
     # the 'admin/' or 'djangoapp/' paths, preventing conflicts.
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
