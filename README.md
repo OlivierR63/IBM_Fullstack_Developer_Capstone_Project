@@ -9,10 +9,54 @@ The application is built on a **Microservices Architecture**, leveraging a polyg
 
 ## High-Level Architecture
 
-The system consists of independent services interacting through RESTful APIs. The communication flow is strictly defined:
+The system follows a **Decoupled SPA (Single Page Application)** architecture, distinguishing between the static UI delivery and dynamic data exchange.
 
-* **Frontend-to-Backend**: The **React Frontend** uses the **Axios** library to perform asynchronous HTTP requests to the Django API Gateway.
-* **Internal Service Mesh**: The **Django Backend** acts as a central orchestrator. It uses the Python **Requests** library to communicate internally with Node.js and Flask microservices.
+### Component Architecture & Data Flow
+
+
+
+```mermaid
+graph TD
+    subgraph User_Machine [User's Computer / Browser]
+        UI[React UI - Running in Browser]
+    end
+
+    subgraph Docker_Network [Docker Network]
+        direction TB
+        Frontend_Srv(Frontend Service - :3000)
+        Django_GW(Django API Gateway - :8000)
+        
+        subgraph Internal_Microservices [Internal Microservices]
+            Sentiment(Sentiment Flask - :5000)
+            Inventory(Inventory Node - :3050)
+            Data_API(Database Node - :3030)
+        end
+        
+        DB[(MongoDB - :27017)]
+    end
+
+    %% Flow of files
+    User_Machine -- 1. Downloads JS/HTML Bundle --> Frontend_Srv
+    
+    %% Flow of data
+    UI -- 2. Direct API Calls (Axios) --> Django_GW
+    
+    %% Internal orchestration
+    Django_GW -- REST (Requests) --> Sentiment
+    Django_GW -- REST (Requests) --> Inventory
+    Django_GW -- REST (Requests) --> Data_API
+    
+    Inventory -- Mongoose --> DB
+    Data_API -- Mongoose --> DB
+
+    style UI fill:#cceeff,stroke:#3377ff
+    style Django_GW fill:#aaffcc,stroke:#00aa44
+    style DB fill:#f0f0f0,stroke:#666666
+```
+
+### Communication Logic
+* **Frontend-to-Backend**: The **React Frontend** uses the **Axios** library to perform asynchronous HTTP requests directly from the user's browser to the Django API Gateway.
+* **Internal Service Mesh**: The **Django Backend** acts as a central orchestrator. It uses the Python **Requests** library to communicate internally with Node.js and Flask microservices within the Docker network.
 
 ### Data Persistence Strategy
 The project utilizes a dual-database approach:
@@ -41,6 +85,7 @@ IBM_Fullstack_Capstone/
 │   └── Dockerfile          # Frontend Docker configuration
 ├── docker-compose.yaml      # Unified Orchestrator (Single Source of Truth)
 └── README.md               # Main project documentation (this file)
+```
 ---
 
 ## Deployment & Getting Started
